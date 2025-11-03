@@ -9,6 +9,7 @@ export AWS_DEFAULT_REGION="us-east-1"
 
 
 Terraform Commands
+
 *terraform init
 
 *terraform validate
