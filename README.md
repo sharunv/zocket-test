@@ -71,7 +71,7 @@ Set up a CI-CD pipeline using Githubaction:
 
 
 
-
+***************************************************************
 name: CI/CD to AWS EC2 from ECR
 on:
   push:
@@ -150,6 +150,7 @@ jobs:
             sudo docker run -d --name task-tracker -p 80:3000 \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           EOF
+**************************************************************************************************          
 
 
 
@@ -161,96 +162,4 @@ jobs:
 
 
 
-name: CI/CD to AWS EC2 from ECR
-
-on:
-  push:
-    branches: [ main ]
-
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  IMAGE_TAG: latest
-
-jobs:
-  build-test-push-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 2️⃣ Set up Node.js and run tests
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: |
-          cd app
-          npm ci
-
-      - name: Run tests
-        run: |
-          cd app
-          npm test
-
-      # 3️⃣ Configure AWS and log in to ECR
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # 4️⃣ Build and push Docker image
-      - name: Build, tag, and push image to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          cd app
-          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} ./task-tracker
-          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-
-      # 5️⃣ Deploy on EC2
-      - name: Deploy on EC2
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          # Save the SSH key from secret
-          echo "${{ secrets.EC2_SSH_KEY }}" > instance-key.pem
-          chmod 400 instance-key.pem
-
-          ssh -o StrictHostKeyChecking=no -i instance-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            set -e
-
-            # Install Docker & AWS CLI if not already installed
-            sudo apt update -y
-            sudo apt install -y docker.io awscli
-            sudo systemctl enable --now docker
-
-            # Login to ECR
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-              sudo docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
-            # Pull latest image
-            sudo docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-
-            # Stop and remove old container (if exists)
-            sudo docker ps -q --filter "name=task-tracker" | grep -q . && sudo docker stop task-tracker && sudo docker rm task-tracker || true
-
-            # Run new container
-            sudo docker run -d --name task-tracker -p 80:3000 \
-              ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          EOF
-
-          # Cleanup SSH key
-          rm -f instance-key.pem
 
