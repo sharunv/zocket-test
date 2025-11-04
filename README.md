@@ -68,11 +68,8 @@ Output shows:
 
 Set up a CI-CD pipeline using Githubaction:
 ******************************************
-
-  * Define secret variales for AWS Access Key and Secret Access key in Github
-
+  * Define secret variables for AWS Access Key and Secret Access key in Github
 ***************************************************************
-
 name: CI/CD to AWS EC2 from ECR
 on:
   push:
@@ -179,7 +176,7 @@ curl -fsSL https://raw.githubusercontent.com/grafana/agent/main/scripts/install.
 Configure Grafana Agent:
 
 sudo nano /etc/grafana-agent.yaml
-
+*******************************************
 metrics:
   global:
     scrape_interval: 15s
@@ -189,19 +186,19 @@ metrics:
         - job_name: "app"
           static_configs:
             - targets: ["localhost:3000"] 
-
+*******************************************
 
 
 Start and Enable the services:
 
-sudo systemctl enable grafana-agent
-sudo systemctl start grafana-agent
-sudo systemctl status grafana-agent
+        sudo systemctl enable grafana-agent
+        sudo systemctl start grafana-agent
+        sudo systemctl status grafana-agent
 
 
 Check metrics collection locally:
 
-curl http://localhost:12345/metrics
+        curl http://localhost:12345/metrics
 
 
 
