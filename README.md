@@ -69,6 +69,10 @@ Output shows:
 Set up a CI-CD pipeline using Githubaction:
 ******************************************
   * Define secret variables for AWS Access Key and Secret Access key in Github
+
+
+
+  
 ***************************************************************
  name: CI/CD to AWS EC2 from ECR
  on:
