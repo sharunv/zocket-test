@@ -72,6 +72,7 @@ Set up a CI-CD pipeline using Githubaction:
   * Define secret variales for AWS Access Key and Secret Access key in Github
 
 ***************************************************************
+
 name: CI/CD to AWS EC2 from ECR
 on:
   push:
