@@ -69,7 +69,7 @@ Output shows:
 Set up a CI-CD pipeline using Githubaction:
 ******************************************
 
-
+  * Define secret variales for AWS Access Key and Secret Access key in Github
 
 ***************************************************************
 name: CI/CD to AWS EC2 from ECR
@@ -150,11 +150,57 @@ jobs:
             sudo docker run -d --name task-tracker -p 80:3000 \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           EOF
-**************************************************************************************************          
+**************************************************************************************************
+
+
+The above pipeline will:
+
+
+        * Configure AWS
+        * Login to ECR repository
+        * Build and push Dockerimage to ECR
+        * Deploy Docker image to EC2 instance
 
 
 
 
+Monitoring using Grafana Agent:
+*******************************
+
+Install Grafana Agent on EC2 instance:
+
+SSH to EC2 Instance:
+ssh -i instance-key.pem ubuntu@30.21.39.17
+
+Download and Install Grafana Agent:
+curl -fsSL https://raw.githubusercontent.com/grafana/agent/main/scripts/install.sh | sudo bash
+
+Configure Grafana Agent:
+
+sudo nano /etc/grafana-agent.yaml
+
+metrics:
+  global:
+    scrape_interval: 15s
+  configs:
+    - name: local
+      scrape_configs:
+        - job_name: "app"
+          static_configs:
+            - targets: ["localhost:3000"] 
+
+
+
+Start and Enable the services:
+
+sudo systemctl enable grafana-agent
+sudo systemctl start grafana-agent
+sudo systemctl status grafana-agent
+
+
+Check metrics collection locally:
+
+curl http://localhost:12345/metrics
 
 
 
