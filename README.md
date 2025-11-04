@@ -1,3 +1,41 @@
+Create Task Tracker Application in Node.Js
+*******************************************
+Create following files in task-tracker app folder:
+
+        * index.js
+        * db.js
+        * package.json
+
+
+Write a Dockerfile for the Node.js application
+**********************************************
+
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+ENV PORT=3000
+EXPOSE 3000
+CMD ["node", "index.js"]
+
+
+This will creates a new Docker image includes:
+
+        * Node.js runtime
+        * App source code
+        * All production dependencies
+        * Environment configuration PORT=3000
+
+
+
+
+Provisioning infrastructure using Terraform
+********************************************
+
+
 Set Access key and Secret key for an IAM user:
 
 export AWS_ACCESS_KEY_ID="xxxxxxxxxxxxxxxxxxx"
