@@ -72,19 +72,19 @@ Set up a CI-CD pipeline using Githubaction:
 
 
 
-  
+
 ***************************************************************
- name: CI/CD to AWS EC2 from ECR
- on:
-  push:
+   name: CI/CD to AWS EC2 from ECR
+    on:
+    push:
     branches: [ main ]
- env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  IMAGE_TAG: latest
- jobs:
-  build-test-push-deploy:
+  env:
+   AWS_REGION: ${{ secrets.AWS_REGION }}
+   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+   IMAGE_TAG: latest
+  jobs:
+   build-test-push-deploy:
     runs-on: ubuntu-latest
 
     steps:
