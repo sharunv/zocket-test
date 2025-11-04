@@ -87,7 +87,8 @@ Monitoring using Grafana Agent:
 Install Grafana Agent on EC2 instance:
 
 SSH to EC2 Instance:
-        ssh -i instance-key.pem ubuntu@30.21.39.17
+
+            ssh -i instance-key.pem ubuntu@30.21.39.17
 
 Download and Install Grafana Agent:
     curl -fsSL https://raw.githubusercontent.com/grafana/agent/main/scripts/install.sh | sudo bash
