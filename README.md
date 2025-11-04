@@ -47,3 +47,18 @@ Terraform Commands:
         *terraform validate 
         *terraform plan
         *terraform apply
+
+
+This will creates:
+
+        * 1 VPC
+        * 1 Public Subnet
+        * Internet Gateway
+        * Route Table allowing Internet access
+        * 1 EC2 Instance with public IP
+        * Security group
+
+Output shows:
+
+        * EC2 instance Public IP
+        * VPC/Subnet ID
