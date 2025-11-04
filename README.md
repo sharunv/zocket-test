@@ -69,6 +69,9 @@ Output shows:
 Set up a CI-CD pipeline using Githubaction:
 ******************************************
 
+
+
+
 name: CI/CD to AWS EC2 from ECR
 on:
   push:
